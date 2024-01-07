@@ -3,7 +3,6 @@ const { network, ethers,upgrades  } = require("hardhat");
 const {
     networkConfig,
     developmentChains,
-    contractList
 } = require("../helper-hardhat-config")
 const { verify } = require("../utils/verify")
 
@@ -11,11 +10,13 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
     const { deploy, log } = deployments
     const { deployer } = await getNamedAccounts()
     const chainId = network.config.chainId;
+    const contractList = {};
+    if (chainId == 31337) {
+        contractList = networkConfig[chainId]["contractList"];
+    } else {
+        contractList = networkConfig[chainId]["contractList"];
+    }
     const usdc = contractList.usdc;
-
-    const waitBlockConfirmations = developmentChains.includes(network.name)
-        ? 1
-        : VERIFICATION_BLOCK_CONFIRMATIONS;
     
     log("----------------------------------------------------");
     const USDCERC20 = await ethers.getContractFactory('FishERC20');

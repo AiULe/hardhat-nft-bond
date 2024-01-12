@@ -1,3 +1,4 @@
+.openzeppelin/.session
 node_modules
 .env
 
@@ -12,3 +13,4 @@ node_modules
 # solidity-coverage files
 /coverage
 /coverage.json
+deployments/

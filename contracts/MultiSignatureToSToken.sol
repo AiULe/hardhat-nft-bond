@@ -4,7 +4,7 @@ pragma solidity ^0.8.10;
 /// @title xuan gnosis
 /// @author xuan
 /// @notice An optimised ERC712-based multisig implementation
-contract XGnosis {
+contract MultiSignatureToSToken {
     /// ERRORS ///
 
     /// @notice Thrown when the provided signatures are invalid, duplicated, or out of order

@@ -4,45 +4,47 @@ const {
     networkConfig,
     developmentChains,
 } = require("../helper-hardhat-config")
-const { verify } = require("../utils/verify.js")
+const { verify } = require("../utils/verify")
 
 module.exports = async ({ getNamedAccounts, deployments }) => {
     const { deploy, log } = deployments
     const { deployer } = await getNamedAccounts()
     const chainId = network.config.chainId;
     let contractList = {};
+    const FACTORYADDR = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
+    const WETHADDR = "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512";
     if (chainId == 31337) {
         contractList = networkConfig[chainId]["contractList"];
     } else {
         contractList = networkConfig[chainId]["contractList"];
     }
-    let usdc = contractList.usdc;
+    let pancakeRouter = contractList.pancakeRouter;
+    const args = [FACTORYADDR,WETHADDR];
     
     log("----------------------------------------------------");
-    const USDCERC20 = await ethers.getContractFactory('FishERC20');
-    if (usdc) {
-        usdc = USDCERC20.attach(usdc);
-        console.log("usdc:", usdc);
+    const PancakeRouter = await ethers.getContractFactory('PancakeRouter');
+    if (pancakeRouter) {
+        pancakeRouter = PancakeRouter.attach(pancakeRouter);
     } else {
-        usdc = await upgrades.deployProxy(USDCERC20, ['USDC-test', 'USDC-test', deployer, '100000000000000000000000000'], { initializer: 'initialize' });
-        await usdc.deployed();
-        // await usdc.waitForDeployment();
-        console.log("usdc:", usdc.address);
+        await deploy("PancakeRouter",{
+            from: deployer,
+            log:true,
+            args:args,
+        })
     }
-    
     
     
 
     // Verify the deployment
     if (!developmentChains.includes(network.name) && process.env.ETHERSCAN_API_KEY) {
         log("Verifying...");
-        await verify(USDCERC20.address, arguments);
+        await verify(PancakeRouter.address, arguments);
     }
 
-    log("Enter usdc with command:");
+    log("Enter pancakerouter with command:");
     const networkName = network.name == "hardhat" ? "localhost" : network.name;
-    log(`yarn hardhat run deploy-04-deploy-usdcerc20.js --network ${networkName}`);
+    log(`yarn hardhat run deploy-03-deploy-pancakerouter.js --network ${networkName}`);
     log("----------------------------------------------------");
 }
 
-module.exports.tags = ["all", "usdcerc20"]
+module.exports.tags = ["all", "pancakerouter"]

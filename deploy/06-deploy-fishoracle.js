@@ -16,33 +16,30 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
     } else {
         contractList = networkConfig[chainId]["contractList"];
     }
-    let usdc = contractList.usdc;
+    let fishOracle = contractList.fishOracle;
     
     log("----------------------------------------------------");
-    const USDCERC20 = await ethers.getContractFactory('FishERC20');
-    if (usdc) {
-        usdc = USDCERC20.attach(usdc);
-        console.log("usdc:", usdc);
+    const FISHORACLE = await ethers.getContractFactory('FishOracle');
+    if (fishOracle) {
+        fishOracle = FISHORACLE.attach(usdc);
     } else {
-        usdc = await upgrades.deployProxy(USDCERC20, ['USDC-test', 'USDC-test', deployer, '100000000000000000000000000'], { initializer: 'initialize' });
-        await usdc.deployed();
-        // await usdc.waitForDeployment();
-        console.log("usdc:", usdc.address);
+        fishOracle = await upgrades.deployProxy(FISHORACLE, [contractList.usdc_fish_lp_address, contractList.fish], { initializer: 'initialize' });
+        await fishOracle.deployed();
     }
-    
+    console.log("fishOracle:", contractList.fishOracle);
     
     
 
     // Verify the deployment
     if (!developmentChains.includes(network.name) && process.env.ETHERSCAN_API_KEY) {
         log("Verifying...");
-        await verify(USDCERC20.address, arguments);
+        await verify(FISHORACLE.address, arguments);
     }
 
-    log("Enter usdc with command:");
+    log("Enter fishoracle with command:");
     const networkName = network.name == "hardhat" ? "localhost" : network.name;
-    log(`yarn hardhat run deploy-04-deploy-usdcerc20.js --network ${networkName}`);
+    log(`yarn hardhat run deploy-06-deploy-fishoracle.js --network ${networkName}`);
     log("----------------------------------------------------");
 }
 
-module.exports.tags = ["all", "usdcerc20"]
+module.exports.tags = ["all", "fishoracle"]

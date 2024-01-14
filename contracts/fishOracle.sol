@@ -16,7 +16,7 @@ interface IAggregator {
     function latestAnswer() external view returns (int256 answer);
 }
 
-contract FISHOracle is Initializable {
+contract FishOracle is Initializable {
     using FixedPoint for *;
     using BoringMath for uint256;
     uint256 public constant PERIOD = 1 minutes;
